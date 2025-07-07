@@ -1,0 +1,19 @@
+<div class="container mt-4">
+  <h2 class="mb-4">Saldo por Morador</h2>
+
+  <table class="table table-bordered table-hover">
+    <thead class="table-light">
+      <tr>
+        <th>Morador</th>
+        <th>Total Devido (R$)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let s of saldos">
+        <td>{{ s.morador }}</td>
+        <td>{{ s.valor }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+

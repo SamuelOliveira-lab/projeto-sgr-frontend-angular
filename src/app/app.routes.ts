@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { LoginComponent } from './pages/login/login.component';
 import { MoradorCadastroComponent } from './pages/morador-cadastro/morador-cadastro.component';
 import { ContaComponent } from './conta/conta.component';
+import { SaldoComponent } from './pages/saldo/saldo.component';
 
 export const routes: Routes = [
       {
@@ -21,6 +22,7 @@ export const routes: Routes = [
         path: 'conta',
         component: ContaComponent
       },
+      { path: 'saldo', component: SaldoComponent },
       { 
         path: '**', 
         redirectTo: '' 
