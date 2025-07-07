@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './pages/login/login.component';
 import { MoradorCadastroComponent } from './pages/morador-cadastro/morador-cadastro.component';
+import { ContaComponent } from './conta/conta.component';
 
 export const routes: Routes = [
       {
@@ -16,8 +17,15 @@ export const routes: Routes = [
         path: 'morador',
         component: MoradorCadastroComponent
       },
+       {
+        path: 'conta',
+        component: ContaComponent
+      },
       { 
         path: '**', 
         redirectTo: '' 
       } 
+
+     
+
 ];
