@@ -17,7 +17,7 @@ export class MoradorCadastroComponent {
           nome: ['', Validators.required],
           cpf: ['', Validators.required],
           celular: ['', Validators.required],
-          datanascimento: ['', Validators.required],
+          dataNascimento: ['', Validators.required],
           email: ['', Validators.required, Validators.email],
           contatoFamilia: ['']
         })
