@@ -1,0 +1,57 @@
+<div class="container mt-4">
+    <h2 class="mb-3">Extrato</h2>
+  
+    <form class="row g-3 mb-4" (ngSubmit)="consultar()">
+      <div class="col-md-3">
+        <label for="dataInicio" class="form-label">Data Início</label>
+        <input type="date" class="form-control" [(ngModel)]="filtro.dataInicio" name="dataInicio" />
+      </div>
+  
+      <div class="col-md-3">
+        <label for="dataFim" class="form-label">Data Término</label>
+        <input type="date" class="form-control" [(ngModel)]="filtro.dataFim" name="dataFim" />
+      </div>
+  
+      <div class="col-md-3">
+        <label for="situacao" class="form-label">Situação</label>
+        <select class="form-control" [(ngModel)]="filtro.situacao" name="situacao">
+          <option value="">Todas</option>
+          <option value="PENDENTE">Pendente</option>
+          <option value="QUITADA">Quitada</option>
+          <option value="CANCELADA">Cancelada</option>
+        </select>
+      </div>
+  
+      <div class="col-md-3">
+        <label for="morador" class="form-label">Morador</label>
+        <select class="form-control" [(ngModel)]="filtro.idMorador" name="morador">
+          <option value="">Todos</option>
+          <option *ngFor="let m of moradores" [value]="m.id">{{ m.nome }}</option>
+        </select>
+      </div>
+  
+      <div class="col-md-12 text-end">
+        <button type="submit" class="btn btn-primary">Consultar</button>
+      </div>
+    </form>
+  
+    <table class="table table-bordered table-striped">
+      <thead class="table-dark">
+        <tr>
+          <th>Tipo</th>
+          <th>Valor</th>
+          <th>Data Vencimento</th>
+          <th>Situação</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let conta of contasFiltradas">
+          <td>{{ conta.tipo }}</td>
+          <td>{{ conta.valor | number:'1.2-2' }}</td>
+          <td>{{ conta.dataVencimento }}</td>
+          <td>{{ conta.situacao }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
