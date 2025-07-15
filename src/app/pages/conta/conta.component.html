@@ -83,39 +83,64 @@
   </table>
 
   <h3 class="mt-5">Rateios Cadastrados</h3>
-  <div *ngFor="let conta of contas" class="mt-4">
-    <h5>Rateios da Conta ID {{ conta.id }} - {{ getTipoNome(conta.idTipoConta) }}</h5>
-    
-    <table class="table table-bordered table-sm" 
-           *ngIf="rateiosPorConta[conta.id!] && rateiosPorConta[conta.id!].length > 0">
-      <thead>
-        <tr>
-          <th>Morador</th>
-          <th>Valor</th>
-          <th>Situação</th>
-          <th>Ações</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let rateio of rateiosPorConta[conta.id!]">
-          <td>{{ getMoradorNome(rateio.idMorador) }}</td>
-          <td>R$ {{ rateio.valor | number:'1.2-2' }}</td>
-          <td>{{ rateio.situacao }}</td>
-          <td>
-            <button class="btn btn-danger btn-sm" (click)="removerRateio(rateio)">
-              <i class="bi bi-x-circle"></i> Remover
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  
-    <p *ngIf="!rateiosPorConta[conta.id!] || rateiosPorConta[conta.id!].length === 0" class="text-muted">
-      Nenhum rateio cadastrado para esta conta.
-    </p>
-  </div>
-  
-  
 
-  <p *ngIf="contas.length === 0" class="text-muted">Nenhuma conta cadastrada ainda.</p>
+<div *ngFor="let conta of contas" class="mt-4">
+  <div class="card border-secondary mb-4">
+    <div class="card-header bg-light">
+      <strong>Conta ID {{ conta.id }} - {{ getTipoNome(conta.idTipoConta) }}</strong>
+    </div>
+    <div class="card-body">
+
+      <!-- Tabela de rateios -->
+      <table class="table table-bordered table-sm mb-3" 
+             *ngIf="rateiosPorConta[conta.id!] && rateiosPorConta[conta.id!].length > 0">
+        <thead>
+          <tr>
+            <th>Morador</th>
+            <th>Valor</th>
+            <th>Situação</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let rateio of rateiosPorConta[conta.id!]">
+            <td>{{ getMoradorNome(rateio.idMorador) }}</td>
+            <td>R$ {{ rateio.valor | number:'1.2-2' }}</td>
+            <td>{{ rateio.situacao }}</td>
+            <td>
+              <button class="btn btn-danger btn-sm" (click)="removerRateio(rateio)">
+                <i class="bi bi-x-circle"></i> Remover
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Mensagem se não houver rateios -->
+      <p *ngIf="!rateiosPorConta[conta.id!] || rateiosPorConta[conta.id!].length === 0" class="text-muted">
+        Nenhum rateio cadastrado para esta conta.
+      </p>
+
+      <!-- Formulário de cadastro de novo rateio -->
+      <form [formGroup]="rateioForms[conta.id!]" (ngSubmit)="cadastrarRateio(conta.id!)" class="row g-2 align-items-end">
+        <div class="col-md-5">
+          <label class="form-label">Morador</label>
+          <select class="form-control" formControlName="idMorador">
+            <option [ngValue]="null" disabled>Selecione</option>
+            <option *ngFor="let m of moradores" [value]="m.id">{{ m.nome }}</option>
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Valor</label>
+          <input type="number" step="0.01" class="form-control" formControlName="valor" />
+        </div>
+
+        <div class="col-md-3 text-end">
+          <button type="submit" class="btn btn-success w-100" >Adicionar Rateio</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
 </div>

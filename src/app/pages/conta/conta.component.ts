@@ -20,6 +20,7 @@ export class ContaComponent implements OnInit {
   moradores: Morador[] = [];
   tipos: TipoConta[] = [];
   rateiosPorConta: { [idConta: number]: Rateio[] } = {};
+  rateioForms: { [idConta: number]: FormGroup } = {};
 
 
   situacoesConta = [
@@ -27,11 +28,11 @@ export class ContaComponent implements OnInit {
     { label: 'Quitada', value: 'QUITADA' },
     { label: 'Cancelada', value: 'CANCELADA' }
   ];
-c: any;
+  c: any;
 
 
   constructor(private fb: FormBuilder, private contaService: ContaService, private moradorService: MoradorService, private tipoContaService: TipoContaService,
-     private rateioService: RateioService
+    private rateioService: RateioService
   ) { }
 
   ngOnInit(): void {
@@ -51,17 +52,62 @@ c: any;
   }
 
   removerRateio(rateio: Rateio): void {
-    const contaId = rateio.idConta;
-    if (!this.rateiosPorConta[contaId]) return;
+    const confirmado = confirm('Tem certeza que deseja remover este rateio?');
+    if (!confirmado) return;
   
-    this.rateiosPorConta[contaId] = this.rateiosPorConta[contaId].filter(r => r !== rateio);
+    this.rateioService.remover(rateio.id!).subscribe({
+      next: () => {
+        alert('Rateio removido com sucesso!');
+        this.carregarRateios(rateio.idConta); // recarrega da API
+      },
+      error: err => {
+        console.error(err);
+        alert('Erro ao remover rateio.');
+      }
+    });
   }
   
+
   carregarRateios(contaId: number): void {
     this.rateioService.listarPorConta(contaId).subscribe(rateios => {
       this.rateiosPorConta[contaId] = rateios;
+      this.inicializarRateioForm(contaId);
+
     });
   }
+  inicializarRateioForm(contaId: number): void {
+    this.rateioForms[contaId] = this.fb.group({
+      idMorador: [null, Validators.required],
+      valor: [null, [Validators.required, Validators.min(0.01)]],
+    });
+  }
+
+  cadastrarRateio(contaId: number): void {
+    const form = this.rateioForms[contaId];
+    if (form.valid) {
+      const novoRateio: Rateio = {
+        idMorador: form.value.idMorador,
+        valor: form.value.valor,
+        idConta: contaId,
+        situacao: 'EM_ABERTO'
+      };
+
+      this.rateioService.cadastrar(novoRateio).subscribe({
+        next: () => {
+          alert('Rateio cadastrado com sucesso!');
+          this.carregarRateios(contaId);
+          form.reset();
+        },
+        error: err => {
+          console.error(err);
+          alert('Erro ao cadastrar rateio.');
+        }
+      });
+    } else {
+      form.markAllAsTouched();
+    }
+  }
+
 
   carregarMoradores(): void {
     this.moradorService.listar().subscribe(data => {
@@ -72,7 +118,10 @@ c: any;
     this.contaService.listar().subscribe(data => {
       this.contas = data;
 
-      this.contas.forEach(conta => this.carregarRateios(conta.id!));
+      this.contas.forEach(conta => {
+        this.carregarRateios(conta.id!);
+        this.inicializarRateioForm(conta.id!);
+      });
     });
   }
 

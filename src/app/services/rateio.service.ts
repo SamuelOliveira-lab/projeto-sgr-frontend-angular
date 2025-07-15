@@ -21,4 +21,17 @@ export class RateioService {
   listarPorConta(idConta: number): Observable<Rateio[]> {
     return this.http.get<Rateio[]>(`${this.baseUrl}/conta/${idConta}`);
   }
+
+  getSaldoDoMorador(idMorador: number): Observable<number> {
+    return this.http.get<number>(`${this.baseUrl}/morador/${idMorador}/saldo`);
+  }
+
+  cadastrar(rateio: Rateio): Observable<Rateio> {
+    return this.http.post<Rateio>(this.baseUrl, rateio);
+  }
+
+  remover(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
+  }  
+  
 }

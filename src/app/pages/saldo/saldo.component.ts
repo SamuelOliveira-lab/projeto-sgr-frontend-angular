@@ -1,24 +1,32 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { MoradorService } from '../../services/morador.service';
+import { RateioService } from '../../services/rateio.service';
+import { NgClass, CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-saldo',
   standalone: true,
-  imports: [CommonModule],
   templateUrl: './saldo.component.html',
-  styleUrl: './saldo.component.css'
+  styleUrl: './saldo.component.css',
+  imports: [CommonModule]
 })
-export class SaldoComponent {
+export class SaldoComponent implements OnInit {
 
   saldos: { morador: string; valor: number }[] = [];
 
-  ngOnInit(): void {
-    
-    this.saldos = [
-      { morador: 'João', valor: 120.50 },
-      { morador: 'Maria', valor: 75.00 },
-      { morador: 'Pedro', valor: 0.00 }
-    ];
-  }
+  constructor(
+    private moradorService: MoradorService,
+    private rateioService: RateioService
+  ) { }
 
+  ngOnInit(): void {
+    this.moradorService.listar().subscribe(moradores => {
+      moradores.forEach(m => {
+        this.rateioService.getSaldoDoMorador(m.id!).subscribe(saldo => {
+          this.saldos.push({ morador: m.nome, valor: +saldo });
+
+        });
+      });
+    });
+  }
 }
