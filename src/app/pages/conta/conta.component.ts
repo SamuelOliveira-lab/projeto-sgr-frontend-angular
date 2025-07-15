@@ -1,45 +1,93 @@
-
-
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ContaService, Conta } from '../../services/conta.service';
+import { MoradorService, Morador } from '../../services/morador.service';
+import { TipoContaService, TipoConta } from '../../services/tipo-conta.service';
+import { HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-conta',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, HttpClientModule],
   templateUrl: './conta.component.html',
   styleUrl: './conta.component.css'
 })
-export class ContaComponent {
+export class ContaComponent implements OnInit {
   contaForm!: FormGroup;
+  contas: Conta[] = [];
+  moradores: Morador[] = [];
+  tipos: TipoConta[] = [];
 
-  moradores = ['João', 'Maria', 'Pedro'];
+  situacoesConta = [
+    { label: 'Pendente', value: 'PENDENTE' },
+    { label: 'Quitada', value: 'QUITADA' },
+    { label: 'Cancelada', value: 'CANCELADA' }
+  ];
+  
 
-    constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private contaService: ContaService, private moradorService: MoradorService, private tipoContaService: TipoContaService
+  ) { }
 
   ngOnInit(): void {
     this.contaForm = this.fb.group({
-      moradorResponsavel: ['', Validators.required],
-      situacaoConta: ['', Validators.required],
-      dataVencimento: ['', Validators.required],
       valor: [null, [Validators.required, Validators.min(0)]],
-      tipoConta: ['', Validators.required],
-      observacao: ['']
+      situacao: ['PENDENTE', Validators.required],
+      dataVencimento: ['', Validators.required],
+      observacao: [''],
+      idMorador: [null, Validators.required],
+      idTipoConta: [null, Validators.required],
+    });
+
+
+    this.carregarMoradores();
+    this.buscarContas();
+    this.carregarTipos();
+  }
+
+  carregarMoradores(): void {
+    this.moradorService.listar().subscribe(data => {
+      this.moradores = data;
+    });
+  }
+  buscarContas(): void {
+    this.contaService.listar().subscribe(data => {
+      this.contas = data;
     });
   }
 
-    onSubmit(): void {
-    if (this.contaForm.valid) {
-      const dados = this.contaForm.value;
-      console.log('Dados da conta:', dados);
+  carregarTipos(): void {
+    this.tipoContaService.listar().subscribe(data => {
+      this.tipos = data;
+    });
+  }
+  getMoradorNome(id: number): string {
+    const morador = this.moradores.find(m => m.id === id);
+    return morador ? morador.nome : 'Desconhecido';
+  }
 
-      // Aqui você pode enviar os dados para uma API
-    } else {
-      console.warn('Formulário inválido!');
-      this.contaForm.markAllAsTouched(); // Força mostrar os erros no template
-    }
+  getTipoNome(idTipo: number): string {
+    const tipo = this.tipos.find(t => t.id === idTipo);
+    return tipo ? tipo.nome : 'Desconhecido';
   }
 
 
+  onSubmit(): void {
+    if (this.contaForm.valid) {
+      const conta: Conta = this.contaForm.value;
+      this.contaService.cadastrar(conta).subscribe({
+        next: () => {
+          alert('Conta cadastrada com sucesso!');
+          this.contaForm.reset();
+          this.buscarContas();
+        },
+        error: err => {
+          console.error(err);
+          alert('Erro ao cadastrar conta.');
+        }
+      });
+    } else {
+      this.contaForm.markAllAsTouched();
+    }
+  }
 }

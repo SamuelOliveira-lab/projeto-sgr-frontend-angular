@@ -1,48 +1,87 @@
-
 <div class="container mt-4">
   <h2 class="mb-4">Conta</h2>
 
   <form [formGroup]="contaForm" (ngSubmit)="onSubmit()">
-
     <div class="row">
+      <!-- Morador responsável -->
       <div class="col-md-6 mb-3">
-        <label for="moradorResponsavel" class="form-label">Morador Responsável</label>
-        <select id="moradorResponsavel" class="form-control" formControlName="moradorResponsavel" required>
-          <option *ngFor="let morador of moradores" [value]="morador">{{ morador }}</option> 
+        <label for="idMorador" class="form-label">Morador Responsável</label>
+        <select id="idMorador" class="form-control" formControlName="idMorador" required>
+          <option [ngValue]="null" disabled>Selecione</option>
+          <option *ngFor="let morador of moradores" [value]="morador.id">{{ morador.nome }}</option>
         </select>
       </div>
 
+      <!-- Situação da conta -->
       <div class="col-md-6 mb-3">
-        <label for="situacaoConta" class="form-label">Situação da Conta</label>
-        <select id="situacaoConta" class="form-control" formControlName="situacaoConta" required>
-          <option value="Pendente">Pendente</option>
-          <option value="Quitada">Quitada</option>
-          <option value="Cancelada">Cancelada</option>
+        <label for="situacao" class="form-label">Situação da Conta</label>
+        <select id="situacao" class="form-control" formControlName="situacao" required>
+          <option [ngValue]="null" disabled>Selecione</option>
+          <option *ngFor="let s of situacoesConta" [value]="s.value">{{ s.label }}</option>
         </select>
+        
       </div>
     </div>
 
     <div class="row">
+      <!-- Data vencimento -->
       <div class="col-md-4 mb-3">
         <label for="dataVencimento" class="form-label">Data Vencimento</label>
         <input id="dataVencimento" type="date" class="form-control" formControlName="dataVencimento" required />
       </div>
 
+      <!-- Valor -->
       <div class="col-md-4 mb-3">
         <label for="valor" class="form-label">Valor</label>
         <input id="valor" type="number" step="0.01" class="form-control" formControlName="valor" required />
       </div>
 
+      <!-- Tipo da conta -->
       <div class="col-md-4 mb-3">
-        <label for="tipoConta" class="form-label">Tipo</label>
-        <input id="tipoConta" type="text" class="form-control" formControlName="tipoConta" required />
+        <label for="tipoConta" class="form-label">Tipo de Conta</label>
+        <select id="tipoConta" class="form-control" formControlName="idTipoConta" required>
+          <option *ngFor="let tipo of tipos" [value]="tipo.id">{{ tipo.nome }}</option>
+        </select>
       </div>
     </div>
 
+    <!-- Observação -->
     <div class="mb-3">
       <label for="observacao" class="form-label">Observação</label>
       <textarea id="observacao" class="form-control" formControlName="observacao" rows="3"></textarea>
     </div>
-  </form>
-</div>
 
+    <!-- Botão salvar -->
+    <div class="text-end">
+      <button type="submit" class="btn btn-primary">Salvar</button>
+    </div>
+  </form>
+
+
+
+  <h3 class="mt-5">Contas Cadastradas</h3>
+  <table class="table table-bordered table-striped mt-2" *ngIf="contas.length > 0">
+    <thead class="table-light">
+      <tr>
+        <th>Tipo</th>
+        <th>Valor</th>
+        <th>Data Vencimento</th>
+        <th>Morador</th>
+        <th>Situação</th>
+        <th>Observação</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let c of contas">
+        <td>{{ getTipoNome(c.idTipoConta) }}</td>
+        <td>R$ {{ c.valor | number: '1.2-2' }}</td>
+        <td>{{ c.dataVencimento }}</td>
+        <td>{{ getMoradorNome(c.idMorador) }}</td>
+        <td>{{ c.situacao }}</td>
+        <td>{{ c.observacao }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p *ngIf="contas.length === 0" class="text-muted">Nenhuma conta cadastrada ainda.</p>
+</div>
