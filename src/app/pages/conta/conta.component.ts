@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ContaService, Conta } from '../../services/conta.service';
 import { MoradorService, Morador } from '../../services/morador.service';
+import { RateioService, Rateio } from '../../services/rateio.service';
 import { TipoContaService, TipoConta } from '../../services/tipo-conta.service';
 import { HttpClientModule } from '@angular/common/http';
 
@@ -18,15 +19,19 @@ export class ContaComponent implements OnInit {
   contas: Conta[] = [];
   moradores: Morador[] = [];
   tipos: TipoConta[] = [];
+  rateiosPorConta: { [idConta: number]: Rateio[] } = {};
+
 
   situacoesConta = [
     { label: 'Pendente', value: 'PENDENTE' },
     { label: 'Quitada', value: 'QUITADA' },
     { label: 'Cancelada', value: 'CANCELADA' }
   ];
-  
+c: any;
 
-  constructor(private fb: FormBuilder, private contaService: ContaService, private moradorService: MoradorService, private tipoContaService: TipoContaService
+
+  constructor(private fb: FormBuilder, private contaService: ContaService, private moradorService: MoradorService, private tipoContaService: TipoContaService,
+     private rateioService: RateioService
   ) { }
 
   ngOnInit(): void {
@@ -45,6 +50,19 @@ export class ContaComponent implements OnInit {
     this.carregarTipos();
   }
 
+  removerRateio(rateio: Rateio): void {
+    const contaId = rateio.idConta;
+    if (!this.rateiosPorConta[contaId]) return;
+  
+    this.rateiosPorConta[contaId] = this.rateiosPorConta[contaId].filter(r => r !== rateio);
+  }
+  
+  carregarRateios(contaId: number): void {
+    this.rateioService.listarPorConta(contaId).subscribe(rateios => {
+      this.rateiosPorConta[contaId] = rateios;
+    });
+  }
+
   carregarMoradores(): void {
     this.moradorService.listar().subscribe(data => {
       this.moradores = data;
@@ -53,6 +71,8 @@ export class ContaComponent implements OnInit {
   buscarContas(): void {
     this.contaService.listar().subscribe(data => {
       this.contas = data;
+
+      this.contas.forEach(conta => this.carregarRateios(conta.id!));
     });
   }
 
