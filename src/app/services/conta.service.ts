@@ -27,4 +27,10 @@ export class ContaService {
   cadastrar(conta: Conta): Observable<Conta> {
     return this.http.post<Conta>(this.baseUrl, conta);
   }
+
+  extrato(inicio: string, fim: string): Observable<Conta[]> {
+    return this.http.get<Conta[]>(`http://localhost:8080/contas/extrato?dataInicial=${inicio}&dataFinal=${fim}`);
+  }
+  
+  
 }

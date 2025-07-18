@@ -1,49 +1,79 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ContaService, Conta } from '../../services/conta.service';
+import { MoradorService, Morador } from '../../services/morador.service';
+import { TipoConta, TipoContaService } from '../../services/tipo-conta.service';
 
 @Component({
   selector: 'app-extrato',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './extrato.component.html',
   styleUrl: './extrato.component.css'
 })
-export class ExtratoComponent {
-  moradores = [
-    { id: 1, nome: 'Samuel' },
-    { id: 2, nome: 'Ana' },
-    { id: 3, nome: 'João' }
-  ];
+export class ExtratoComponent implements OnInit {
+  extratoForm!: FormGroup;
+  extrato: Conta[] = [];
+  moradores: Morador[] = [];
+  tipos: TipoConta[] = [];
 
-  contas = [
-    { tipo: 'Aluguel', valor: 1000.00, dataVencimento: '2025-04-05', situacao: 'PENDENTE', idMorador: 1 },
-    { tipo: 'Internet', valor: 200.00, dataVencimento: '2025-04-01', situacao: 'QUITADA', idMorador: 2 }
-  ];
+  constructor(
+    private fb: FormBuilder,
+    private contaService: ContaService,
+    private moradorService: MoradorService,
+    private tipoContaService: TipoContaService
+  ) {}
 
-  filtro = {
-    dataInicio: '',
-    dataFim: '',
-    situacao: '',
-    idMorador: ''
-  };
+  ngOnInit(): void {
+    this.carregarTipos();
+    this.extratoForm = this.fb.group({
+      inicio: ['', Validators.required],
+      fim: ['', Validators.required],
+      situacao: [''],
+      idMorador: ['']
+    });
+    
 
-  contasFiltradas = [...this.contas];
-
-  consultar() {
-    this.contasFiltradas = this.contas.filter(c => {
-      const venc = new Date(c.dataVencimento);
-      const ini = this.filtro.dataInicio ? new Date(this.filtro.dataInicio) : null;
-      const fim = this.filtro.dataFim ? new Date(this.filtro.dataFim) : null;
-
-      const condData =
-        (!ini || venc >= ini) &&
-        (!fim || venc <= fim);
-
-      const condSit = !this.filtro.situacao || c.situacao === this.filtro.situacao;
-      const condMorador = !this.filtro.idMorador || c.idMorador === Number(this.filtro.idMorador);
-
-      return condData && condSit && condMorador;
+    this.moradorService.listar().subscribe(data => {
+      this.moradores = data;
     });
   }
+
+
+  consultarExtrato(): void {
+    const { inicio, fim, situacao, idMorador } = this.extratoForm.value;
+  
+    const dataInicio = this.formatarData(inicio);
+    const dataFim = this.formatarData(fim);
+  
+    this.contaService.extrato(dataInicio, dataFim).subscribe(data => {
+      this.extrato = data.filter(c =>
+        (!situacao || c.situacao === situacao) &&
+        (!idMorador || c.idMorador === +idMorador)
+      );
+    });
+  }
+
+  formatarData(data: any): string {
+    const d = new Date(data);
+    return d.toISOString().slice(0, 10); 
+  }
+
+  carregarTipos(): void {
+    this.tipoContaService.listar().subscribe(data => {
+      this.tipos = data;
+    });
+  }
+
+  getMoradorNome(id: number): string {
+    const morador = this.moradores.find(m => m.id === id);
+    return morador ? morador.nome : 'Desconhecido';
+  }
+
+  getTipoNome(idTipo: number): string {
+    const tipo = this.tipos.find(t => t.id === idTipo);
+    return tipo ? tipo.nome : 'Desconhecido';
+  }
+  
 }
