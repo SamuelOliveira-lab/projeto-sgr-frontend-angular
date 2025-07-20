@@ -15,7 +15,7 @@ export class MoradorCadastroComponent {
   moradorForm: FormGroup;
   moradores: Morador[] = [];
 
-  constructor(private fb: FormBuilder, private moradorService: MoradorService) { //pq tenho que passar formBuilder
+  constructor(private fb: FormBuilder, private moradorService: MoradorService) { 
     this.moradorForm = this.fb.group({
       nome: ['', Validators.required],
       cpf: ['', Validators.required],

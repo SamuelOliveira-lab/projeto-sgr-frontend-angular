@@ -5,6 +5,7 @@ import { SaldoComponent } from './pages/saldo/saldo.component';
 import { ContaComponent } from './pages/conta/conta.component';
 import { ExtratoComponent } from './pages/extrato/extrato.component';
 import { MainLayoutComponent } from './layout/main-layout/main-layout.component';
+import { PainelComponent } from './pages/painel/painel.component';
 
 
 export const routes: Routes = [
@@ -19,7 +20,8 @@ export const routes: Routes = [
       { path: 'morador', component: MoradorCadastroComponent },
       { path: 'conta', component: ContaComponent },
       { path: 'saldo', component: SaldoComponent },
-      { path: 'extrato',component: ExtratoComponent}
+      { path: 'extrato',component: ExtratoComponent},
+      { path: 'painel', component: PainelComponent}
 
     ]
   },
@@ -40,6 +42,10 @@ export const routes: Routes = [
   {
     path: 'extrato',
     component: ExtratoComponent
+  },
+  {
+    path: 'painel',
+    component: PainelComponent
   },
   {
     path: '**',
