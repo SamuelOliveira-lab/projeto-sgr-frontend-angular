@@ -21,6 +21,7 @@ export class ContaComponent implements OnInit {
   tipos: TipoConta[] = [];
   rateiosPorConta: { [idConta: number]: Rateio[] } = {};
   rateioForms: { [idConta: number]: FormGroup } = {};
+  editandoContaId: number | null = null;
 
 
   situacoesConta = [
@@ -51,6 +52,37 @@ export class ContaComponent implements OnInit {
     this.carregarTipos();
   }
 
+  duplicarConta(id: number): void {
+    this.contaService.duplicarConta(id).subscribe({
+      next: novaConta => {
+        this.contas.push(novaConta);
+        this.rateiosPorConta[novaConta.id!] = [];
+  
+        this.rateioForms[novaConta.id!] = this.fb.group({
+          idMorador: [null],
+          valor: [0]
+        });
+        
+        // Preenche o formulário com os dados da nova conta
+        this.contaForm.patchValue({
+          idMorador: novaConta.idMorador,
+          situacao: novaConta.situacao,
+          dataVencimento: novaConta.dataVencimento,
+          valor: novaConta.valor,
+          idTipoConta: novaConta.idTipoConta,
+          observacao: novaConta.observacao
+        });
+  
+        // Salva o ID da conta que está sendo editada (ver passo 2)
+        this.editandoContaId = novaConta.id!;
+      },
+      error: err => {
+        console.error('Erro ao duplicar conta:', err);
+        alert('Erro ao duplicar conta');
+      }
+    });
+  }
+
   removerRateio(rateio: Rateio): void {
     const confirmado = confirm('Tem certeza que deseja remover este rateio?');
     if (!confirmado) return;
@@ -73,6 +105,7 @@ export class ContaComponent implements OnInit {
       this.rateiosPorConta[contaId] = rateios;
       this.inicializarRateioForm(contaId);
 
+      
     });
   }
   inicializarRateioForm(contaId: number): void {
@@ -142,21 +175,31 @@ export class ContaComponent implements OnInit {
 
 
   onSubmit(): void {
-    if (this.contaForm.valid) {
-      const conta: Conta = this.contaForm.value;
-      this.contaService.cadastrar(conta).subscribe({
-        next: () => {
-          alert('Conta cadastrada com sucesso!');
+    if (this.contaForm.invalid) return;
+  
+    const conta = this.contaForm.value;
+  
+    if (this.editandoContaId) {
+      // Atualizar conta existente (você pode implementar PUT no service/backend)
+      this.contaService.atualizarConta(this.editandoContaId, conta).subscribe({
+        next: atualizada => {
+          const index = this.contas.findIndex(c => c.id === this.editandoContaId);
+          if (index !== -1) {
+            this.contas[index] = atualizada;
+          }
+          this.editandoContaId = null;
           this.contaForm.reset();
-          this.buscarContas();
         },
         error: err => {
-          console.error(err);
-          alert('Erro ao cadastrar conta.');
+          console.error('Erro ao atualizar conta:', err);
         }
       });
     } else {
-      this.contaForm.markAllAsTouched();
+      // Criar nova conta
+      this.contaService.cadastrar(conta).subscribe(nova => {
+        this.contas.push(nova);
+        this.contaForm.reset();
+      });
     }
   }
 }

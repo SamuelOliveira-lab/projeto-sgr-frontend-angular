@@ -31,6 +31,16 @@ export class ContaService {
   extrato(inicio: string, fim: string): Observable<Conta[]> {
     return this.http.get<Conta[]>(`http://localhost:8080/contas/extrato?dataInicial=${inicio}&dataFinal=${fim}`);
   }
+
+  duplicarConta(id: number): Observable<Conta> {
+    return this.http.post<Conta>(`${this.baseUrl}/${id}/replicar`, {});
+  }
+
+  atualizarConta(id: number, conta: Conta): Observable<Conta> {
+    return this.http.put<Conta>(`${this.baseUrl}/${id}`, conta);
+  }
+  
+  
   
   
 }
