@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Rateio } from './rateio.service';
 
 export interface Conta {
   id?: number;
@@ -40,7 +41,9 @@ export class ContaService {
     return this.http.put<Conta>(`${this.baseUrl}/${id}`, conta);
   }
   
-  
+  quitarRateio(idRateio: number, idMorador: number): Observable<Rateio> {
+    return this.http.put<Rateio>(`http://localhost:8080/rateios/${idRateio}/quitar?moradorId=${idMorador}`, {});
+  }
   
   
 }

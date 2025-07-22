@@ -52,6 +52,30 @@ export class ContaComponent implements OnInit {
     this.carregarTipos();
   }
 
+  quitarRateio(idRateio: number, idMorador: number): void {
+    if (!confirm('Deseja realmente quitar este rateio?')) return;
+  
+    this.contaService.quitarRateio(idRateio, idMorador).subscribe({
+      next: atualizado => {
+        // Atualiza a situação do rateio localmente
+        const contaId = atualizado.idConta;
+        const rateios = this.rateiosPorConta[contaId];
+        const index = rateios.findIndex(r => r.id === atualizado.id);
+        if (index !== -1) {
+          rateios[index] = atualizado;
+        }
+        alert('Rateio quitado com sucesso!');
+        this.buscarContas;
+      },
+      error: err => {
+        console.error(err);
+        alert(err.error?.message || 'Erro ao quitar rateio');
+      }
+    });
+    
+  }
+  
+
   duplicarConta(id: number): void {
     this.contaService.duplicarConta(id).subscribe({
       next: novaConta => {
@@ -108,6 +132,8 @@ export class ContaComponent implements OnInit {
       
     });
   }
+
+  
   inicializarRateioForm(contaId: number): void {
     this.rateioForms[contaId] = this.fb.group({
       idMorador: [null, Validators.required],
@@ -148,8 +174,8 @@ export class ContaComponent implements OnInit {
     });
   }
   buscarContas(): void {
-    this.contaService.listar().subscribe(data => {
-      this.contas = data;
+    this.contaService.listar().subscribe(contas => {
+      this.contas = contas;
 
       this.contas.forEach(conta => {
         this.carregarRateios(conta.id!);

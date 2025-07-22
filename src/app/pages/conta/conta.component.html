@@ -113,6 +113,10 @@
             <td>R$ {{ rateio.valor | number:'1.2-2' }}</td>
             <td>{{ rateio.situacao }}</td>
             <td>
+              <button class="btn btn-success btn-sm me-1" (click)="quitarRateio(rateio.id!, rateio.idMorador)">
+                <i class="bi bi-check-circle"></i> Quitar
+              </button>
+            
               <button class="btn btn-danger btn-sm" (click)="removerRateio(rateio)">
                 <i class="bi bi-x-circle"></i> Remover
               </button>

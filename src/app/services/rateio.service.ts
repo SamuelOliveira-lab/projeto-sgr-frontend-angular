@@ -33,5 +33,9 @@ export class RateioService {
   remover(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }  
+
+  quitarRateio(idRateio: number, idMoradorPagador: number): Observable<Rateio> {
+    return this.http.put<Rateio>(`http://localhost:8080/rateios/${idRateio}/quitar?moradorId=${idMoradorPagador}`, {});
+  }
   
 }
