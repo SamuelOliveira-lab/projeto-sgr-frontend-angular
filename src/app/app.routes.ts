@@ -6,6 +6,8 @@ import { ContaComponent } from './pages/conta/conta.component';
 import { ExtratoComponent } from './pages/extrato/extrato.component';
 import { MainLayoutComponent } from './layout/main-layout/main-layout.component';
 import { PainelComponent } from './pages/painel/painel.component';
+import { AuthGuard } from './auth.guard';
+
 
 export const routes: Routes = [
   {
@@ -20,6 +22,7 @@ export const routes: Routes = [
   {
     path: '',
     component: MainLayoutComponent,
+    canActivate: [AuthGuard],
     children: [
       { path: 'morador', component: MoradorCadastroComponent },
       { path: 'conta', component: ContaComponent },

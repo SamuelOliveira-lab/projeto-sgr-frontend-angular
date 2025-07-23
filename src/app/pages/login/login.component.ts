@@ -14,7 +14,11 @@ import { Router } from '@angular/router';
 export class LoginComponent {
   loginForm: FormGroup;
 
-  constructor(private fb: FormBuilder,private http: HttpClient,private router: Router) {
+  constructor(
+    private fb: FormBuilder,
+    private http: HttpClient,
+    private router: Router
+  ) {
     this.loginForm = this.fb.group({
       login: ['', [Validators.required]],
       senha: ['', [Validators.required, Validators.minLength(2)]]
@@ -24,12 +28,15 @@ export class LoginComponent {
   onSubmit() {
     if (this.loginForm.valid) {
       const loginData = this.loginForm.value;
-      this.http.post('https://projeto-sgr-backend-springboot-2.onrender.com/moradores/auth/login'
-, loginData, { responseType: 'text' })
-      .subscribe({
+
+      this.http.post('https://projeto-sgr-backend-springboot-2.onrender.com/moradores/auth/login',
+        loginData,
+        { responseType: 'text' }
+      ).subscribe({
         next: res => {
-          console.log('Login bem-sucedido:', res);
-          this.router.navigate(['/conta']); // Redirecionar após login
+          // Salva o token (ou qualquer dado retornado) no localStorage
+          localStorage.setItem('authToken', res);
+          this.router.navigate(['/conta']); // Redireciona após o login
         },
         error: err => {
           alert('Erro no login: ' + err.error);
