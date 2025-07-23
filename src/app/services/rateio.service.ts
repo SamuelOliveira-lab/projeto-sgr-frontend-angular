@@ -14,7 +14,8 @@ export interface Rateio {
   providedIn: 'root'
 })
 export class RateioService {
-  private baseUrl = 'http://localhost:8080/rateios';
+  private baseUrl = 'https://projeto-sgr-backend-springboot-2.onrender.com/rateios';
+
 
   constructor(private http: HttpClient) {}
 

@@ -17,7 +17,7 @@ export interface Morador {
 
 @Injectable({ providedIn: 'root' })
 export class MoradorService {
-  private apiUrl = 'http://localhost:8080/moradores';
+  private apiUrl = 'https://projeto-sgr-backend-springboot-2.onrender.com/moradores';
 
   constructor(private http: HttpClient) {}
 

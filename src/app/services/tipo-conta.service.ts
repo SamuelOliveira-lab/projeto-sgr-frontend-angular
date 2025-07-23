@@ -11,7 +11,8 @@ export interface TipoConta {
   providedIn: 'root'
 })
 export class TipoContaService {
-  private readonly baseUrl = 'http://localhost:8080/tipos';
+  private readonly baseUrl = 'https://projeto-sgr-backend-springboot-2.onrender.com/tipos';
+;
 
   constructor(private http: HttpClient) {}
 

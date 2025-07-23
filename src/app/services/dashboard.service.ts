@@ -17,7 +17,8 @@ export interface GastoPorMoradorDTO {
   providedIn: 'root'
 })
 export class DashboardService {
-  private baseUrl = 'http://localhost:8080/contas';
+  private baseUrl = 'https://projeto-sgr-backend-springboot-2.onrender.com/contas';
+
 
   constructor(private http: HttpClient) {}
 

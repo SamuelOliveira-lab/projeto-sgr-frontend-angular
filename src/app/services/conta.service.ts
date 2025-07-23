@@ -17,7 +17,8 @@ export interface Conta {
   providedIn: 'root'
 })
 export class ContaService {
-  private baseUrl = 'http://localhost:8080/contas';
+  private baseUrl = 'https://projeto-sgr-backend-springboot-2.onrender.com/contas';
+
 
   constructor(private http: HttpClient) {}
 
