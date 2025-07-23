@@ -36,7 +36,8 @@ export class RateioService {
   }  
 
   quitarRateio(idRateio: number, idMoradorPagador: number): Observable<Rateio> {
-    return this.http.put<Rateio>(`http://localhost:8080/rateios/${idRateio}/quitar?moradorId=${idMoradorPagador}`, {});
+    return this.http.put<Rateio>(`https://projeto-sgr-backend-springboot-2.onrender.com/rateios/${idRateio}/quitar?moradorId=${idMoradorPagador}`
+, {});
   }
   
 }

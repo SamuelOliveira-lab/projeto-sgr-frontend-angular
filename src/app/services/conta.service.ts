@@ -31,7 +31,8 @@ export class ContaService {
   }
 
   extrato(inicio: string, fim: string): Observable<Conta[]> {
-    return this.http.get<Conta[]>(`http://localhost:8080/contas/extrato?dataInicial=${inicio}&dataFinal=${fim}`);
+    return this.http.get<Conta[]>(`https://projeto-sgr-backend-springboot-2.onrender.com/contas/extrato?dataInicial=${inicio}&dataFinal=${fim}`
+);
   }
 
   duplicarConta(id: number): Observable<Conta> {
@@ -43,7 +44,8 @@ export class ContaService {
   }
   
   quitarRateio(idRateio: number, idMorador: number): Observable<Rateio> {
-    return this.http.put<Rateio>(`http://localhost:8080/rateios/${idRateio}/quitar?moradorId=${idMorador}`, {});
+    return this.http.put<Rateio>(`https://projeto-sgr-backend-springboot-2.onrender.com/rateios/${idRateio}/quitar?moradorId=${idMorador}`
+, {});
   }
   
   
