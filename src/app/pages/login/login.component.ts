@@ -24,7 +24,8 @@ export class LoginComponent {
   onSubmit() {
     if (this.loginForm.valid) {
       const loginData = this.loginForm.value;
-      this.http.post('http://localhost:8080/moradores/auth/login', loginData, { responseType: 'text' })
+      this.http.post('https://projeto-sgr-backend-springboot-2.onrender.com/moradores/auth/login'
+, loginData, { responseType: 'text' })
       .subscribe({
         next: res => {
           console.log('Login bem-sucedido:', res);
