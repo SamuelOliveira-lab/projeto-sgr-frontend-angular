@@ -1,4 +1,4 @@
-# Descrição  
+# Description  
 **Angular** application developed as an interface for a [REST API for managing finances and expenses](https://github.com/SamuelOliveira-lab/projeto-sgr-backend-springboot).
 
 # ProjetoSgrFrontend
